@@ -1,5 +1,8 @@
 ﻿using HotelListing.Configurations;
 using HotelListing.Data;
+using HotelListing.IRepository;
+using HotelListing.Repository;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 
 public class Startup
@@ -20,7 +23,7 @@ public class Startup
         // Register services here, like controllers
         services.AddSwaggerGen(); // If using Startup.cs
 
-        services.AddControllers();
+        services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         services.AddCors(o => {
             o.AddPolicy("Allow All", builder =>
             builder.AllowAnyOrigin()
@@ -28,6 +31,7 @@ public class Startup
             .AllowAnyHeader());
         });
         services.AddAutoMapper(typeof(MapperInitializer));
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
